@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from "electron";
+import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage, screen } from "electron";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
@@ -320,32 +320,40 @@ ipcMain.on("window:expand", () => {
   }
 });
 
-  function createCompactWindow() {
-
+function createCompactWindow() {
   if (compactWindow) {
     compactWindow.show();
     compactWindow.focus();
     return;
   }
 
-compactWindow = new BrowserWindow({
-  width: 420,
-  height: 520,
-  frame: false,
-  resizable: false,
-  movable: true,
-  minimizable: false,
-  maximizable: false,
-  fullscreenable: false,
-  alwaysOnTop: true,
-  skipTaskbar: true,
-  backgroundColor: "#070911",
-  webPreferences: {
-    preload: path.join(__dirname, "preload.js"),
-    contextIsolation: true,
-    nodeIntegration: false
-  }
-});
+  const display = screen.getPrimaryDisplay();
+  const { width, height } = display.workAreaSize;
+
+  const windowSize = 360;
+
+  compactWindow = new BrowserWindow({
+    width: windowSize,
+    height: windowSize,
+    x: width - windowSize - 20,
+    y: height - windowSize - 20,
+
+    frame: false,
+    resizable: false,
+    movable: true,
+    minimizable: false,
+    maximizable: false,
+    fullscreenable: false,
+    alwaysOnTop: true,
+    skipTaskbar: true,
+    backgroundColor: "#070911",
+
+    webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
 
   const compactPath = path.join(__dirname, "compact.html");
   compactWindow.loadFile(compactPath, { query: { apiPort: String(serverPort) } });
