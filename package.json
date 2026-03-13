@@ -1,0 +1,56 @@
+{
+  "name": "alice-electron",
+  "version": "1.2.1-stable",
+  "type": "module",
+  "main": "main.js",
+"scripts": {
+  "start": "electron .",
+  "dist": "electron-builder",
+  "server": "node server.js",
+  "bot": "node telegram-bot.js",
+  "tg": "concurrently -k -n \"SERVER,BOT\" -c \"cyan,magenta\" \"node server.js\" \"node telegram-bot.js\""
+},
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^4.19.2",
+    "telegraf": "^4.16.3",
+    "telegraph": "^0.8.22"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.3.1",
+    "electron": "^40.6.1",
+    "electron-builder": "^26.8.1"
+  },
+  "build": {
+    "appId": "com.alicelite.app",
+    "productName": "Alice Lite",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "**/*"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Alice Lite"
+    }
+  }
+}

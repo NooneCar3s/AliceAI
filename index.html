@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Companion • Alice Lite</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+<div class="app">
+
+  <!-- CUSTOM TITLEBAR -->
+  <div class="custom-titlebar">
+    <div class="drag-region">
+      <div class="app-badge">Alice Lite</div>
+    </div>
+
+    <div class="window-controls">
+      <button id="minBtn" class="win-btn" aria-label="Minimize">—</button>
+      <button id="maxBtn" class="win-btn" aria-label="Maximize">☐</button>
+      <button id="closeBtn" class="win-btn win-close" aria-label="Close">✕</button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT (старый layout) -->
+  <div class="content">
+    <!-- LEFT: CHAT -->
+    <div class="chat-section">
+
+      <div class="chat-header">
+        <div class="chat-title">Алиса</div>
+        <div class="chat-subtitle" id="statusText">online • отвечает локально</div>
+
+        <div class="controls-row">
+          <div class="controls-label">Режим:</div>
+          <select id="modeSelect" class="glass-select">
+            <option value="standard">Стандарт</option>
+            <option value="assist">Ассистент</option>
+            <option value="care">Забота</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="messages" class="messages"></div>
+
+      <div class="input-area">
+        <input id="input" placeholder="Напиши сообщение..." />
+        <button type="button" onclick="sendMessage()">➤</button>
+        <button type="button" onclick="resetChat()">↻</button>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: CHARACTER -->
+    <div class="character-section">
+      <div class="character-stage">
+        <img id="aliceImage" class="alice-img" src="images/idle.png" alt="Alice" />
+        <div class="stage-glow"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
