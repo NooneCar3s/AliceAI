@@ -4,6 +4,8 @@ const statusText = document.getElementById("statusText");
 const modeSelect = document.getElementById("modeSelect");
 
 const notificationSound = new Audio("notification.mp3");
+const splashSound = new Audio("voice/splash-hello.mp3");
+splashSound.volume = 0.9;
 
 // В Electron получаем базовый URL API (порт динамический)
 const API_BASE = window.aliceAPI?.getApiBase?.() || "http://127.0.0.1:3000";
@@ -213,38 +215,6 @@ document.getElementById("closeBtn")?.addEventListener("click", () => {
   window.windowControls?.close();
 });
 
-
-// ===== SPLASH CONTROL (5 секунд) =====
-
-window.addEventListener("load", () => {
-
-  const splash = document.getElementById("splash");
-  const percent = document.getElementById("progressPercent");
-
-  let p = 0;
-
-  const interval = setInterval(() => {
-
-    p += 2;
-
-    if (p >= 100){
-      p = 100;
-      clearInterval(interval);
-    }
-
-    if (percent) percent.textContent = p + "%";
-
-  }, 100); // прогресс обновляется каждые 100мс
-
-  setTimeout(() => {
-
-    if (splash) splash.classList.add("hidden");
-
-  }, 5000); // 5 секунд
-
-});
-
-
 // ===== GUIDE MODAL =====
 
 const guideBtn = document.getElementById("guideBtn");
@@ -268,4 +238,33 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape" && guideModal && !guideModal.classList.contains("hidden")) {
     closeGuide();
   }
+});
+
+// ===== SPLASH CONTROL (5 секунд + голос) =====
+
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splash");
+  const percent = document.getElementById("progressPercent");
+
+  let p = 0;
+
+  setTimeout(() => {
+    splashSound.currentTime = 0;
+    splashSound.play().catch(() => {});
+  }, 150);
+
+  const interval = setInterval(() => {
+    p += 2;
+
+    if (p >= 100) {
+      p = 100;
+      clearInterval(interval);
+    }
+
+    if (percent) percent.textContent = p + "%";
+  }, 100);
+
+  setTimeout(() => {
+    if (splash) splash.classList.add("hidden");
+  }, 5000);
 });
