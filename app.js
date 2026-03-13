@@ -282,6 +282,10 @@ input.addEventListener("keydown", (e) => {
 
 statusText.textContent = `online • ${currentMode}`;
 
+document.getElementById("compactBtn")?.addEventListener("click", () => {
+  window.windowControls?.compact();
+});
+
 document.getElementById("minBtn")?.addEventListener("click", () => {
   window.windowControls?.minimize();
 });

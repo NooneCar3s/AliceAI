@@ -11,7 +11,9 @@ contextBridge.exposeInMainWorld("aliceAPI", {
 contextBridge.exposeInMainWorld("windowControls", {
   minimize: () => ipcRenderer.send("win:minimize"),
   maximize: () => ipcRenderer.send("win:maximize"),
-  close: () => ipcRenderer.send("win:close")
+  close: () => ipcRenderer.send("win:close"),
+  compact: () => ipcRenderer.send("window:compact"),
+  expand: () => ipcRenderer.send("window:expand")
 });
 
 contextBridge.exposeInMainWorld("spotifyControls", {

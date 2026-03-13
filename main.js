@@ -9,6 +9,7 @@ const currentFile = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(currentFile);
 
 let mainWindow = null;
+let compactWindow = null;
 let serverPort = null;
 let tray = null;
 let isQuiting = false;
@@ -292,6 +293,67 @@ ipcMain.handle("desktop:open-steam", async () => {
     };
   }
 });
+
+ipcMain.on("window:compact", () => {
+
+  if (mainWindow) {
+    mainWindow.hide();
+  }
+
+  createCompactWindow();
+
+});
+
+ipcMain.on("window:expand", () => {
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) {
+      mainWindow.restore();
+    }
+
+    mainWindow.show();
+    mainWindow.focus();
+  }
+
+  if (compactWindow) {
+    compactWindow.destroy();
+    compactWindow = null;
+  }
+});
+
+  function createCompactWindow() {
+
+  if (compactWindow) {
+    compactWindow.show();
+    compactWindow.focus();
+    return;
+  }
+
+compactWindow = new BrowserWindow({
+  width: 420,
+  height: 520,
+  frame: false,
+  resizable: false,
+  movable: true,
+  minimizable: false,
+  maximizable: false,
+  fullscreenable: false,
+  alwaysOnTop: true,
+  skipTaskbar: true,
+  backgroundColor: "#070911",
+  webPreferences: {
+    preload: path.join(__dirname, "preload.js"),
+    contextIsolation: true,
+    nodeIntegration: false
+  }
+});
+
+  const compactPath = path.join(__dirname, "compact.html");
+  compactWindow.loadFile(compactPath, { query: { apiPort: String(serverPort) } });
+
+  compactWindow.on("closed", () => {
+    compactWindow = null;
+  });
+}
 
 async function createWindow() {
   const s = await startServer(0);

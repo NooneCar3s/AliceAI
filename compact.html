@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alice Compact</title>
+  <link rel="stylesheet" href="compact.css" />
+</head>
+<body>
+  <div class="compact-shell">
+    <div class="compact-header">
+      <div class="compact-drag">
+        <div class="compact-badge">Alice Compact</div>
+        <div class="compact-subtitle">быстрый чат</div>
+      </div>
+
+      <div class="compact-actions">
+        <button id="expandBtn" class="compact-btn" type="button" aria-label="Развернуть">⤢</button>
+      </div>
+    </div>
+
+    <div id="messages" class="compact-messages"></div>
+
+    <div class="compact-input-wrap">
+      <input id="input" type="text" placeholder="Напиши сообщение..." />
+      <button id="sendBtn" class="send-btn" type="button">➤</button>
+    </div>
+  </div>
+
+  <script src="compact.js"></script>
+</body>
+</html>
