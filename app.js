@@ -13,7 +13,10 @@ const COMMAND_VOICE_MAP = {
   pause_music: "voice/commands/pause-music.mp3",
   open_opera: "voice/commands/open-opera.mp3",
   open_steam: "voice/commands/open-steam.mp3",
-  about_alice: "voice/commands/about-alice.mp3"
+  about_alice: "voice/commands/about-alice.mp3",
+  open_youtube: "voice/commands/open-youtube.mp3",
+  open_github: "voice/commands/open-github.mp3",
+  open_twitch: "voice/commands/open-twitch.mp3"
 };
 
 // В Electron получаем базовый URL API (порт динамический)
@@ -195,6 +198,32 @@ async function handleDesktopAction(action) {
       }
       return;
     }
+    if (action.type === "open_youtube") {
+  const result = await window.desktopControls?.openYoutube?.();
+
+  if (!result?.ok) {
+    addMessage("Не смогла открыть YouTube 😢", "ai");
+  }
+  return;
+}
+
+if (action.type === "open_github") {
+  const result = await window.desktopControls?.openGithub?.();
+
+  if (!result?.ok) {
+    addMessage("Не смогла открыть GitHub 😢", "ai");
+  }
+  return;
+}
+
+if (action.type === "open_twitch") {
+  const result = await window.desktopControls?.openTwitch?.();
+
+  if (!result?.ok) {
+    addMessage("Не смогла открыть Twitch 😢", "ai");
+  }
+  return;
+}
   } catch (e) {
     console.error("Desktop action failed:", e);
     addMessage("Не смогла выполнить команду 😢", "ai");

@@ -167,6 +167,29 @@ function detectLocalAction(text = "") {
   };
 }
 
+// ===== open websites =====
+
+if (t === "алиса открой ютуб" || t === "алиса открой youtube") {
+  return {
+    type: "open_youtube",
+    reply: "Открываю YouTube"
+  };
+}
+
+if (t === "алиса открой гитхаб" || t === "алиса открой github") {
+  return {
+    type: "open_github",
+    reply: "Открываю GitHub"
+  };
+}
+
+if (t === "алиса открой твич" || t === "алиса открой twitch") {
+  return {
+    type: "open_twitch",
+    reply: "Открываю Twitch"
+  };
+}
+
   return null;
 }
 

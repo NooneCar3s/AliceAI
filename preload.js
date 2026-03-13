@@ -23,5 +23,8 @@ contextBridge.exposeInMainWorld("spotifyControls", {
 
 contextBridge.exposeInMainWorld("desktopControls", {
   openOpera: () => ipcRenderer.invoke("desktop:open-opera"),
-  openSteam: () => ipcRenderer.invoke("desktop:open-steam")
+  openSteam: () => ipcRenderer.invoke("desktop:open-steam"),
+  openYoutube: () => ipcRenderer.invoke("desktop:open-youtube"),
+  openGithub: () => ipcRenderer.invoke("desktop:open-github"),
+  openTwitch: () => ipcRenderer.invoke("desktop:open-twitch")
 });

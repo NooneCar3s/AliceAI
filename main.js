@@ -294,6 +294,33 @@ ipcMain.handle("desktop:open-steam", async () => {
   }
 });
 
+ipcMain.handle("desktop:open-youtube", async () => {
+  try {
+    await shell.openExternal("https://youtube.com");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false };
+  }
+});
+
+ipcMain.handle("desktop:open-github", async () => {
+  try {
+    await shell.openExternal("https://github.com");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false };
+  }
+});
+
+ipcMain.handle("desktop:open-twitch", async () => {
+  try {
+    await shell.openExternal("https://twitch.tv");
+    return { ok: true };
+  } catch (e) {
+    return { ok: false };
+  }
+});
+
 ipcMain.on("window:compact", () => {
 
   if (mainWindow) {
