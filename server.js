@@ -143,6 +143,30 @@ function detectLocalAction(text = "") {
     };
   }
 
+  if (
+    t === "алиса открой стим" ||
+    t === "алиса открой steam" ||
+    t === "алиса запусти стим" ||
+    t === "алиса запусти steam"
+  ) {
+    return {
+      type: "open_steam",
+      reply: "Открываю Steam 🎮"
+    };
+  }
+
+  if (
+  t === "алиса расскажи о себе" ||
+  t === "алиса кто ты" ||
+  t === "алиса что ты умеешь"
+) {
+  return {
+    type: "about_alice",
+    reply:
+      "Я Алиса. Я живу прямо на твоём компьютере и работаю на локальном искусственном интеллекте. Это значит, что наши разговоры никуда не отправляются и остаются только между нами. Я могу болтать с тобой, помогать с задачами, запускать программы и просто составлять тебе компанию. Так что… можешь считать меня своим личным ассистентом. И немного своей девушкой."
+  };
+}
+
   return null;
 }
 
@@ -190,7 +214,10 @@ api.post("/chat", async (req, res) => {
     if (localAction) {
       return res.json({
         reply: localAction.reply,
-        action: { type: localAction.type }
+        action: { type: localAction.type },
+        meta: {
+          isLocalAction: true
+        }
       });
     }
 
@@ -218,7 +245,12 @@ api.post("/chat", async (req, res) => {
     history.push({ role: "assistant", content: reply });
     trimHistory(history);
 
-    res.json({ reply });
+    res.json({
+      reply,
+      meta: {
+        isLocalAction: false
+      }
+    });
   } catch (e) {
     console.error(e);
     res.status(500).json({ reply: "Ошибка сервера 🥲" });
@@ -251,9 +283,9 @@ export async function stopServer() {
   httpServer = null;
 }
 
-const __filename = fileURLToPath(import.meta.url);
+const currentFile = fileURLToPath(import.meta.url);
 
-if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
+if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(currentFile)) {
   startServer(3000)
     .then((s) => console.log(`✅ API server standalone on http://127.0.0.1:${s.address().port}`))
     .catch((e) => {

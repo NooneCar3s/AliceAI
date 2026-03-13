@@ -113,6 +113,42 @@ async function openOpera() {
   };
 }
 
+async function openSteam() {
+  try {
+    await shell.openExternal("steam://open/main");
+    return { ok: true, protocol: true };
+  } catch {
+    // fallback ниже
+  }
+
+  const username = process.env.USERNAME || "";
+
+  const candidates = [
+    `C:\\Program Files (x86)\\Steam\\Steam.exe`,
+    `C:\\Program Files\\Steam\\Steam.exe`,
+    `C:\\Users\\${username}\\AppData\\Local\\Steam\\Steam.exe`
+  ];
+
+  for (const exePath of candidates) {
+    if (fileExists(exePath)) {
+      try {
+        await launchDetached(exePath);
+        return { ok: true, path: exePath };
+      } catch (e) {
+        return {
+          ok: false,
+          message: `Нашла Steam, но не смогла запустить: ${String(e?.message || e)}`
+        };
+      }
+    }
+  }
+
+  return {
+    ok: false,
+    message: "Не нашла установленный Steam на этом компьютере"
+  };
+}
+
 ipcMain.on("win:minimize", () => mainWindow?.minimize());
 
 ipcMain.on("win:maximize", () => {
@@ -155,6 +191,17 @@ ipcMain.handle("desktop:open-opera", async () => {
     return {
       ok: false,
       message: `Ошибка запуска Opera: ${String(e?.message || e)}`
+    };
+  }
+});
+
+ipcMain.handle("desktop:open-steam", async () => {
+  try {
+    return await openSteam();
+  } catch (e) {
+    return {
+      ok: false,
+      message: `Ошибка запуска Steam: ${String(e?.message || e)}`
     };
   }
 });

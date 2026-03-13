@@ -7,6 +7,15 @@ const notificationSound = new Audio("notification.mp3");
 const splashSound = new Audio("voice/splash-hello.mp3");
 splashSound.volume = 0.9;
 
+// ===== command voices =====
+const COMMAND_VOICE_MAP = {
+  open_favorite_spotify: "voice/commands/open-spotify.mp3",
+  pause_music: "voice/commands/pause-music.mp3",
+  open_opera: "voice/commands/open-opera.mp3",
+  open_steam: "voice/commands/open-steam.mp3",
+  about_alice: "voice/commands/about-alice.mp3"
+};
+
 // В Electron получаем базовый URL API (порт динамический)
 const API_BASE = window.aliceAPI?.getApiBase?.() || "http://127.0.0.1:3000";
 
@@ -89,13 +98,28 @@ function reactionFromText(text) {
   return null;
 }
 
+async function playCommandVoice(actionType) {
+  const src = COMMAND_VOICE_MAP[actionType];
+  if (!src) return;
+
+  try {
+    const audio = new Audio(src);
+    audio.currentTime = 0;
+    await audio.play();
+  } catch (e) {
+    console.warn("Command voice failed:", actionType, e);
+  }
+}
+
 aliceImage.classList.add("alice-breathe");
 setEmotion(EMOTIONS.idle);
 
 input.focus();
 resetIdleTimer();
 
-function addMessage(text, sender) {
+function addMessage(text, sender, options = {}) {
+  const { playNotification = sender === "ai" } = options;
+
   const div = document.createElement("div");
   div.classList.add("message", sender);
   div.innerText = text;
@@ -105,7 +129,7 @@ function addMessage(text, sender) {
 
   resetIdleTimer();
 
-  if (sender === "ai") {
+  if (sender === "ai" && playNotification) {
     notificationSound.currentTime = 0;
     notificationSound.play().catch(() => {});
   }
@@ -162,6 +186,15 @@ async function handleDesktopAction(action) {
       }
       return;
     }
+
+    if (action.type === "open_steam") {
+      const result = await window.desktopControls?.openSteam?.();
+
+      if (!result?.ok) {
+        addMessage(result?.message || "Не смогла открыть Steam 😢", "ai");
+      }
+      return;
+    }
   } catch (e) {
     console.error("Desktop action failed:", e);
     addMessage("Не смогла выполнить команду 😢", "ai");
@@ -190,9 +223,17 @@ async function sendMessage(event) {
     });
 
     const data = await response.json();
+    const isLocalAction = Boolean(data?.meta?.isLocalAction);
 
     typing.remove();
-    addMessage(data.reply, "ai");
+
+    addMessage(data.reply, "ai", {
+      playNotification: !isLocalAction
+    });
+
+    if (isLocalAction && data?.action?.type) {
+      await playCommandVoice(data.action.type);
+    }
 
     await handleDesktopAction(data.action);
 
@@ -273,10 +314,35 @@ guideCloseBtn?.addEventListener("click", closeGuide);
 guideBackdrop?.addEventListener("click", closeGuide);
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && guideModal && !guideModal.classList.contains("hidden")) {
+  if (e.key !== "Escape") return;
+
+  if (guideModal && !guideModal.classList.contains("hidden")) {
     closeGuide();
   }
+
+  if (commandsModal && !commandsModal.classList.contains("hidden")) {
+    closeCommands();
+  }
 });
+
+// ===== COMMANDS MODAL =====
+
+const commandsBtn = document.getElementById("commandsBtn");
+const commandsModal = document.getElementById("commandsModal");
+const commandsCloseBtn = document.getElementById("commandsCloseBtn");
+const commandsBackdrop = commandsModal?.querySelector(".guide-backdrop");
+
+function openCommands() {
+  commandsModal?.classList.remove("hidden");
+}
+
+function closeCommands() {
+  commandsModal?.classList.add("hidden");
+}
+
+commandsBtn?.addEventListener("click", openCommands);
+commandsCloseBtn?.addEventListener("click", closeCommands);
+commandsBackdrop?.addEventListener("click", closeCommands);
 
 // ===== SPLASH CONTROL (5 секунд + голос) =====
 

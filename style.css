@@ -38,6 +38,7 @@ body::before{
 .app{
   height:100vh;
   display:flex;
+  flex-direction: column;
 }
 
 /* ===== LEFT: CHAT PANEL ===== */
@@ -263,7 +264,6 @@ button:active{ transform: scale(0.94); }
   position:relative;
   overflow:hidden;
 
-
   display:flex;
   align-items:flex-end;
   justify-content:center;
@@ -287,11 +287,9 @@ button:active{ transform: scale(0.94); }
   position:relative;
   z-index:2;
 
-
   width: 100%;
   height: 100%;
   object-fit: contain;
-
   object-position: center bottom;
 
   filter: drop-shadow(0 18px 45px rgba(0,0,0,0.65));
@@ -317,14 +315,15 @@ button:active{ transform: scale(0.94); }
 .fade-out{ opacity:0; }
 .fade-in{ opacity:1; }
 
-
 /* ===== Controls: glass selects ===== */
 
 .controls-row{
-  margin-top:10px;
   display:flex;
-  gap:10px;
   align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:10px;
 }
 
 .controls-label{
@@ -352,7 +351,6 @@ button:active{ transform: scale(0.94); }
   -webkit-appearance: none;
   -moz-appearance: none;
 
-  /* кастомная стрелочка (SVG) */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='rgba(255,255,255,0.72)' d='M7 10l5 5l5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 14px center;
@@ -418,12 +416,6 @@ button:active{ transform: scale(0.94); }
 
 /* ===== Electron custom titlebar ===== */
 
-.app{
-  height:100vh;
-  display:flex;
-  flex-direction: column; /* важно! */
-}
-
 .content{
   flex:1;
   display:flex;
@@ -449,8 +441,6 @@ button:active{ transform: scale(0.94); }
   height: 100%;
   display:flex;
   align-items:center;
-
-
   -webkit-app-region: drag;
 }
 
@@ -469,8 +459,6 @@ button:active{ transform: scale(0.94); }
   display:flex;
   gap: 8px;
   padding-left: 10px;
-
-
   -webkit-app-region: no-drag;
 }
 
@@ -494,7 +482,6 @@ button:active{ transform: scale(0.94); }
   background: rgba(255, 80, 80, 0.25);
   border-color: rgba(255, 80, 80, 0.35);
 }
-
 
 /* ===== SPLASH SCREEN ===== */
 
@@ -523,9 +510,7 @@ button:active{ transform: scale(0.94); }
 .splash-card{
   width:620px;
   max-width:90%;
-
   padding:42px 36px 34px;
-
   border-radius:28px;
 
   background:
@@ -546,13 +531,10 @@ button:active{ transform: scale(0.94); }
   display:flex;
   align-items:center;
   gap:10px;
-
   font-size:13px;
   letter-spacing:.15em;
   text-transform:uppercase;
-
   color:rgba(215,228,255,.7);
-
   margin-bottom:18px;
 }
 
@@ -560,11 +542,8 @@ button:active{ transform: scale(0.94); }
   width:10px;
   height:10px;
   border-radius:50%;
-
   background:#8ab4ff;
-
   box-shadow:0 0 18px rgba(138,180,255,.8);
-
   animation:pulseDot 1.3s infinite;
 }
 
@@ -582,7 +561,6 @@ button:active{ transform: scale(0.94); }
 
 .splash-title span{
   display:block;
-
   background:linear-gradient(
   135deg,
   #ffffff 0%,
@@ -595,10 +573,8 @@ button:active{ transform: scale(0.94); }
 
 .splash-subtitle{
   margin-top:16px;
-
   font-size:15px;
   line-height:1.6;
-
   color:rgba(226,235,255,.75);
 }
 
@@ -611,13 +587,9 @@ button:active{ transform: scale(0.94); }
 .boot-line{
   display:flex;
   justify-content:space-between;
-
   font-size:14px;
-
   padding:10px 14px;
-
   border-radius:12px;
-
   background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.06);
 }
@@ -637,32 +609,24 @@ button:active{ transform: scale(0.94); }
 .progress-head{
   display:flex;
   justify-content:space-between;
-
   font-size:12px;
   letter-spacing:.08em;
   text-transform:uppercase;
-
   margin-bottom:8px;
-
   color:rgba(219,230,255,.7);
 }
 
 .progress-bar{
   height:10px;
-
   border-radius:999px;
-
   background:rgba(255,255,255,.08);
-
   overflow:hidden;
-
   border:1px solid rgba(255,255,255,.06);
 }
 
 .progress-fill{
   width:0%;
   height:100%;
-
   background:linear-gradient(
   90deg,
   #79a7ff,
@@ -670,7 +634,6 @@ button:active{ transform: scale(0.94); }
   #83f0ff);
 
   box-shadow:0 0 20px rgba(121,167,255,.45);
-
   animation:fillBar 3s ease forwards;
 }
 
@@ -682,15 +645,7 @@ button:active{ transform: scale(0.94); }
   100%{width:100%}
 }
 
-/* ===== MODE + GUIDE BUTTON SAFE LAYOUT ===== */
-
-.controls-row{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
-  flex-wrap:wrap;
-}
+/* ===== MODE + BUTTONS ===== */
 
 .mode-actions{
   display:flex;
@@ -744,7 +699,7 @@ button:active{ transform: scale(0.94); }
   transform:scale(.97);
 }
 
-/* ===== GUIDE MODAL ===== */
+/* ===== GUIDE / COMMANDS MODAL ===== */
 
 .guide-modal{
   position:fixed;
@@ -899,6 +854,27 @@ button:active{ transform: scale(0.94); }
   background:rgba(7,12,24,.72);
   border:1px solid rgba(130,170,255,.16);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.03);
+}
+
+/* commands modal */
+.commands-dialog{
+  width:min(760px, calc(100vw - 32px));
+}
+
+.commands-content{
+  gap:12px;
+}
+
+.command-card h3{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.command-card h3::before{
+  content:"⌘";
+  color:rgba(151,189,255,.85);
+  font-size:15px;
 }
 
 /* чтобы модалка скроллилась красиво */

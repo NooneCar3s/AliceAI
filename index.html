@@ -9,197 +9,239 @@
 
 <body>
   <!-- SPLASH SCREEN -->
-<div id="splash" class="splash">
-  <div class="splash-card">
+  <div id="splash" class="splash">
+    <div class="splash-card">
 
-    <div class="splash-topline">
-      <div class="pulse-dot"></div>
-      <span>boot sequence</span>
-    </div>
-
-    <h1 class="splash-title">
-      <span>Alice</span>
-      <span>Lite</span>
-    </h1>
-
-    <div class="splash-subtitle">
-      Локальный AI companion запускается. Подготавливаю интерфейс и подключаю ядро диалога.
-    </div>
-
-    <div class="boot-lines">
-      <div class="boot-line">
-        <span>UI shell initialized</span>
-        <span class="line-ok">OK</span>
+      <div class="splash-topline">
+        <div class="pulse-dot"></div>
+        <span>boot sequence</span>
       </div>
 
-      <div class="boot-line">
-        <span>Emotion engine loaded</span>
-        <span class="line-ok">OK</span>
+      <h1 class="splash-title">
+        <span>Alice</span>
+        <span>Lite</span>
+      </h1>
+
+      <div class="splash-subtitle">
+        Локальный AI companion запускается. Подготавливаю интерфейс и подключаю ядро диалога.
       </div>
 
-      <div class="boot-line">
-        <span>Session memory mounted</span>
-        <span class="line-ok">OK</span>
+      <div class="boot-lines">
+        <div class="boot-line">
+          <span>UI shell initialized</span>
+          <span class="line-ok">OK</span>
+        </div>
+
+        <div class="boot-line">
+          <span>Emotion engine loaded</span>
+          <span class="line-ok">OK</span>
+        </div>
+
+        <div class="boot-line">
+          <span>Session memory mounted</span>
+          <span class="line-ok">OK</span>
+        </div>
+
+        <div class="boot-line">
+          <span>Connecting to local core</span>
+          <span class="line-wait">WAIT</span>
+        </div>
       </div>
 
-      <div class="boot-line">
-        <span>Connecting to local core</span>
-        <span class="line-wait">WAIT</span>
-      </div>
-    </div>
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <span>initializing</span>
+          <span id="progressPercent">0%</span>
+        </div>
 
-    <div class="progress-wrap">
-
-      <div class="progress-head">
-        <span>initializing</span>
-        <span id="progressPercent">0%</span>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
       </div>
 
-      <div class="progress-bar">
-        <div class="progress-fill"></div>
-      </div>
-
-    </div>
-
-  </div>
-</div>
-
-<div class="app">
-
-  <!-- CUSTOM TITLEBAR -->
-  <div class="custom-titlebar">
-    <div class="drag-region">
-      <div class="app-badge">Alice Lite</div>
-    </div>
-
-    <div class="window-controls">
-      <button id="minBtn" class="win-btn" aria-label="Minimize">—</button>
-      <button id="maxBtn" class="win-btn" aria-label="Maximize">☐</button>
-      <button id="closeBtn" class="win-btn win-close" aria-label="Close">✕</button>
     </div>
   </div>
 
-  <!-- MAIN CONTENT (старый layout) -->
-  <div class="content">
-    <!-- LEFT: CHAT -->
-    <div class="chat-section">
+  <div class="app">
 
-  <div class="chat-header">
-    <div class="chat-title">Алиса</div>
-    <div class="chat-subtitle" id="statusText">online • отвечает локально</div>
+    <!-- CUSTOM TITLEBAR -->
+    <div class="custom-titlebar">
+      <div class="drag-region">
+        <div class="app-badge">Alice Lite</div>
+      </div>
 
-    <div class="controls-row">
-      <div class="controls-label">Режим:</div>
+      <div class="window-controls">
+        <button id="minBtn" class="win-btn" aria-label="Minimize">—</button>
+        <button id="maxBtn" class="win-btn" aria-label="Maximize">☐</button>
+        <button id="closeBtn" class="win-btn win-close" aria-label="Close">✕</button>
+      </div>
+    </div>
 
-      <div class="mode-actions">
-        <select id="modeSelect" class="glass-select">
-          <option value="standard">Стандарт</option>
-          <option value="assist">Ассистент</option>
-          <option value="care">Забота</option>
-        </select>
+    <!-- MAIN CONTENT -->
+    <div class="content">
+      <!-- LEFT: CHAT -->
+      <div class="chat-section">
 
-        <button id="guideBtn" class="guide-icon-btn" type="button" aria-label="Открыть гайд">?</button>
+        <div class="chat-header">
+          <div class="chat-title">Алиса</div>
+          <div class="chat-subtitle" id="statusText">online • отвечает локально</div>
+
+          <div class="controls-row">
+            <div class="controls-label">Режим:</div>
+
+            <div class="mode-actions">
+              <select id="modeSelect" class="glass-select">
+                <option value="standard">Стандарт</option>
+                <option value="assist">Ассистент</option>
+                <option value="care">Забота</option>
+              </select>
+
+              <button id="commandsBtn" class="guide-icon-btn" type="button" aria-label="Открыть команды">⌘</button>
+              <button id="guideBtn" class="guide-icon-btn" type="button" aria-label="Открыть гайд">?</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="messages" class="messages"></div>
+
+        <div class="input-area">
+          <input id="input" placeholder="Напиши сообщение..." />
+          <button type="button" onclick="sendMessage()">➤</button>
+          <button type="button" onclick="resetChat()">↻</button>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: CHARACTER -->
+      <div class="character-section">
+        <div class="character-stage">
+          <img id="aliceImage" class="alice-img" src="images/idle.png" alt="Alice" />
+          <div class="stage-glow"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- GUIDE MODAL -->
+  <div id="guideModal" class="guide-modal hidden">
+    <div class="guide-backdrop"></div>
+
+    <div class="guide-dialog">
+      <button id="guideCloseBtn" class="guide-close" type="button" aria-label="Закрыть">✕</button>
+
+      <div class="guide-head">
+        <div class="guide-kicker">guide / help</div>
+        <div class="guide-title">Как работает Alice Lite</div>
+        <div class="guide-subtitle">
+          Короткий гайд по запуску, Ollama и модели.
+        </div>
+      </div>
+
+      <div class="guide-content">
+        <section class="guide-section">
+          <h3>Что это вообще</h3>
+          <p>
+            Alice Lite — это локальный AI companion. Интерфейс запускается как обычное приложение,
+            а ответы генерируются через Ollama на твоём ПК.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>Что нужно для работы</h3>
+          <p>
+            1. Установить <b>Ollama</b><br>
+            2. Скачать нужную модель<br>
+            3. Запустить Ollama<br>
+            4. После этого открыть Alice Lite
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>Установка Ollama</h3>
+          <p>
+            Скачай Ollama с официального сайта, установи как обычную программу и убедись, что она запускается без ошибок.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>Нужная модель</h3>
+          <p>
+            В текущей версии используется модель:<br>
+            <b>gemma3:4b</b>
+          </p>
+          <p>
+            Команда для установки:
+          </p>
+          <div class="guide-code">ollama pull gemma3:4b</div>
+        </section>
+
+        <section class="guide-section">
+          <h3>Как понять, что всё ок</h3>
+          <p>
+            Если Ollama запущена и модель скачана, Алиса будет нормально отвечать в чате.
+            Если нет — появятся ошибки соединения или пустые ответы.
+          </p>
+        </section>
+
+        <section class="guide-section">
+          <h3>Если Алиса не отвечает</h3>
+          <p>
+            Проверь:
+            <br>— запущена ли Ollama
+            <br>— скачана ли модель gemma3:4b
+            <br>— не занят ли порт/не упал ли локальный сервер
+            <br>— перезапусти приложение после запуска Ollama
+          </p>
+        </section>
       </div>
     </div>
   </div>
 
-  <div id="messages" class="messages"></div>
+  <!-- COMMANDS MODAL -->
+  <div id="commandsModal" class="guide-modal hidden">
+    <div class="guide-backdrop"></div>
 
-  <div class="input-area">
-    <input id="input" placeholder="Напиши сообщение..." />
-    <button type="button" onclick="sendMessage()">➤</button>
-    <button type="button" onclick="resetChat()">↻</button>
-  </div>
+    <div class="guide-dialog commands-dialog">
+      <button id="commandsCloseBtn" class="guide-close" type="button" aria-label="Закрыть">✕</button>
 
-</div>
+      <div class="guide-head">
+        <div class="guide-kicker">local commands</div>
+        <div class="guide-title">Команды Alice Lite</div>
+        <div class="guide-subtitle">
+          Локальные команды, которые Алиса выполняет без Ollama.
+        </div>
+      </div>
 
-    <!-- RIGHT: CHARACTER -->
-    <div class="character-section">
-      <div class="character-stage">
-        <img id="aliceImage" class="alice-img" src="images/idle.png" alt="Alice" />
-        <div class="stage-glow"></div>
+      <div class="guide-content commands-content">
+        <section class="guide-section command-card">
+          <h3>Алиса, включи музыку</h3>
+          <p>Открывает твой любимый плейлист в Spotify и пытается запустить воспроизведение.</p>
+        </section>
+
+        <section class="guide-section command-card">
+          <h3>Алиса, выключи музыку</h3>
+          <p>Ставит музыку на паузу.</p>
+        </section>
+
+        <section class="guide-section command-card">
+          <h3>Алиса, открой оперу</h3>
+          <p>Запускает Opera Air или обычную Opera, если она установлена.</p>
+        </section>
+
+        <section class="guide-section command-card">
+          <h3>Алиса, открой стим</h3>
+          <p>Запускает Steam.</p>
+        </section>
+
+        <section class="guide-section command-card">
+          <h3>Алиса, расскажи о себе</h3>
+          <p>Алиса рассказывает о себе голосом и пишет ответ прямо в чат.</p>
+        </section>
       </div>
     </div>
   </div>
 
-</div>
-
-<!-- GUIDE MODAL -->
-<div id="guideModal" class="guide-modal hidden">
-  <div class="guide-backdrop"></div>
-
-  <div class="guide-dialog">
-    <button id="guideCloseBtn" class="guide-close" type="button" aria-label="Закрыть">✕</button>
-
-    <div class="guide-head">
-      <div class="guide-kicker">guide / help</div>
-      <div class="guide-title">Как работает Alice Lite</div>
-      <div class="guide-subtitle">
-        Короткий гайд по запуску, Ollama и модели.
-      </div>
-    </div>
-
-    <div class="guide-content">
-      <section class="guide-section">
-        <h3>Что это вообще</h3>
-        <p>
-          Alice Lite — это локальный AI companion. Интерфейс запускается как обычное приложение,
-          а ответы генерируются через Ollama на твоём ПК.
-        </p>
-      </section>
-
-      <section class="guide-section">
-        <h3>Что нужно для работы</h3>
-        <p>
-          1. Установить <b>Ollama</b><br>
-          2. Скачать нужную модель<br>
-          3. Запустить Ollama<br>
-          4. После этого открыть Alice Lite
-        </p>
-      </section>
-
-      <section class="guide-section">
-        <h3>Установка Ollama</h3>
-        <p>
-          Скачай Ollama с официального сайта, установи как обычную программу и убедись, что она запускается без ошибок.
-        </p>
-      </section>
-
-      <section class="guide-section">
-        <h3>Нужная модель</h3>
-        <p>
-          В текущей версии используется модель:<br>
-          <b>gemma3:4b</b>
-        </p>
-        <p>
-          Команда для установки:
-        </p>
-        <div class="guide-code">ollama pull gemma3:4b</div>
-      </section>
-
-      <section class="guide-section">
-        <h3>Как понять, что всё ок</h3>
-        <p>
-          Если Ollama запущена и модель скачана, Алиса будет нормально отвечать в чате.
-          Если нет — появятся ошибки соединения или пустые ответы.
-        </p>
-      </section>
-
-      <section class="guide-section">
-        <h3>Если Алиса не отвечает</h3>
-        <p>
-          Проверь:
-          <br>— запущена ли Ollama
-          <br>— скачана ли модель gemma3:4b
-          <br>— не занят ли порт/не упал ли локальный сервер
-          <br>— перезапусти приложение после запуска Ollama
-        </p>
-      </section>
-    </div>
-  </div>
-</div>
-
-
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
