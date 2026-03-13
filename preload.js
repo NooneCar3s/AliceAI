@@ -1,4 +1,3 @@
-// preload.js (CommonJS)
 const { contextBridge, ipcRenderer } = require("electron");
 
 contextBridge.exposeInMainWorld("aliceAPI", {
@@ -15,8 +14,7 @@ contextBridge.exposeInMainWorld("windowControls", {
   close: () => ipcRenderer.send("win:close")
 });
 
-contextBridge.exposeInMainWorld("windowControls", {
-  minimize: () => ipcRenderer.send("win:minimize"),
-  maximize: () => ipcRenderer.send("win:maximize"),
-  close:    () => ipcRenderer.send("win:close")
+contextBridge.exposeInMainWorld("spotifyControls", {
+  openFavoritePlaylist: () => ipcRenderer.invoke("spotify:open-favorite"),
+  pause: () => ipcRenderer.invoke("spotify:pause")
 });

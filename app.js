@@ -132,6 +132,27 @@ function setUIBusy(isBusy) {
   if (isBusy) setEmotion(EMOTIONS.sleepy, { temporary: true, returnMs: 0 });
 }
 
+async function handleDesktopAction(action) {
+  if (!action?.type) return;
+
+  try {
+if (action.type === "open_favorite_spotify") {
+  const result = await window.spotifyControls?.openFavoritePlaylist?.();
+
+  if (!result?.ok) {
+    addMessage("Не смогла открыть Spotify 😢", "ai");
+  }
+}
+
+if (action.type === "pause_music") {
+  await window.spotifyControls?.pause?.();
+}
+  } catch (e) {
+    console.error("Desktop action failed:", e);
+    addMessage("Не смогла выполнить команду 😢", "ai");
+  }
+}
+
 async function sendMessage(event) {
   if (event) event.preventDefault();
 
@@ -157,6 +178,8 @@ async function sendMessage(event) {
 
     typing.remove();
     addMessage(data.reply, "ai");
+
+    await handleDesktopAction(data.action);
 
     const react = reactionFromText(data.reply);
     if (react) setEmotion(react, { temporary: true, returnMs: 2800 });

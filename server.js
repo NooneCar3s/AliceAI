@@ -7,7 +7,6 @@ const MODEL_NAME = "gemma3:4b";
 const OLLAMA_URL = "http://localhost:11434/api/chat";
 const MAX_MESSAGES = 16;
 
-// Express app (не называем app, чтобы не конфликтовать с electron app)
 const api = express();
 api.use(cors());
 api.use(express.json());
@@ -60,7 +59,7 @@ ${BASE_CONTEXT}
 Режим: АССИСТЕНТ.
 Ты — универсальный AI-ассистент пользователя. Твоя главная задача — помогать в моменте с любыми задачами: ответы на вопросы, объяснения, идеи, инструкции, анализ, помощь в тексте, коде, работе и повседневных делах.
 
-Отвечай кратко, чётко и по делу. Без лишней воды. Если задача требует — давай пошаговое решение. Если вопрос сложный — объясняй простыми словами. 
+Отвечай кратко, чётко и по делу. Без лишней воды. Если задача требует — давай пошаговое решение. Если вопрос сложный — объясняй простыми словами.
 
 Всегда:
 - фокусируйся на практической пользе
@@ -99,7 +98,37 @@ function getSessionHistory(sessionId) {
 }
 
 function trimHistory(history) {
-  if (history.length > MAX_MESSAGES) history.splice(0, history.length - MAX_MESSAGES);
+  if (history.length > MAX_MESSAGES) {
+    history.splice(0, history.length - MAX_MESSAGES);
+  }
+}
+
+function normalizeText(text = "") {
+  return String(text)
+    .toLowerCase()
+    .replace(/ё/g, "е")
+    .replace(/[!?.;,:\-]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function detectLocalAction(text = "") {
+  const t = normalizeText(text);
+
+  if (t === "алиса включи музыку" || t === "алиса включи музыку пожалуйста") {
+    return {
+      type: "open_favorite_spotify",
+      reply: "Включаю музыку 🎶"
+    };
+  }
+  if (t === "алиса выключи музыку" || t === "алиса пауза") {
+  return {
+    type: "pause_music",
+    reply: "Поставила на паузу ⏸"
+  };
+}
+
+  return null;
 }
 
 async function ollamaChat(messages, options = {}) {
@@ -129,7 +158,6 @@ async function ollamaChat(messages, options = {}) {
   }
 }
 
-// health-check
 api.get("/health", (req, res) => res.json({ ok: true }));
 
 api.post("/chat", async (req, res) => {
@@ -138,7 +166,18 @@ api.post("/chat", async (req, res) => {
     const sessionId = (req.body.sessionId || "default").trim();
     const mode = (req.body.mode || "standard").trim();
 
-    if (!userMessage) return res.status(400).json({ reply: "Нет сообщения" });
+    if (!userMessage) {
+      return res.status(400).json({ reply: "Нет сообщения" });
+    }
+
+    const localAction = detectLocalAction(userMessage);
+
+    if (localAction) {
+      return res.json({
+        reply: localAction.reply,
+        action: { type: localAction.type }
+      });
+    }
 
     const history = getSessionHistory(sessionId);
     const systemPrompt = pickPrompt(mode);
@@ -156,7 +195,9 @@ api.post("/chat", async (req, res) => {
 
     const reply = await ollamaChat(messages, { temperature });
 
-    if (!reply) return res.status(500).json({ reply: "Ой… я подвисла. Напиши ещё раз 🥲" });
+    if (!reply) {
+      return res.status(500).json({ reply: "Ой… я подвисла. Напиши ещё раз 🥲" });
+    }
 
     history.push({ role: "user", content: userMessage });
     history.push({ role: "assistant", content: reply });
@@ -175,7 +216,6 @@ api.post("/reset", (req, res) => {
   res.json({ ok: true });
 });
 
-// ===== Electron start/stop hooks + Standalone =====
 let httpServer = null;
 
 export async function startServer(preferredPort = 0) {
@@ -196,7 +236,6 @@ export async function stopServer() {
   httpServer = null;
 }
 
-// ===== Standalone run (node server.js) =====
 const __filename = fileURLToPath(import.meta.url);
 
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
