@@ -243,3 +243,29 @@ window.addEventListener("load", () => {
   }, 5000); // 5 секунд
 
 });
+
+
+// ===== GUIDE MODAL =====
+
+const guideBtn = document.getElementById("guideBtn");
+const guideModal = document.getElementById("guideModal");
+const guideCloseBtn = document.getElementById("guideCloseBtn");
+const guideBackdrop = guideModal?.querySelector(".guide-backdrop");
+
+function openGuide() {
+  guideModal?.classList.remove("hidden");
+}
+
+function closeGuide() {
+  guideModal?.classList.add("hidden");
+}
+
+guideBtn?.addEventListener("click", openGuide);
+guideCloseBtn?.addEventListener("click", closeGuide);
+guideBackdrop?.addEventListener("click", closeGuide);
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && guideModal && !guideModal.classList.contains("hidden")) {
+    closeGuide();
+  }
+});

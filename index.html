@@ -84,29 +84,34 @@
     <!-- LEFT: CHAT -->
     <div class="chat-section">
 
-      <div class="chat-header">
-        <div class="chat-title">Алиса</div>
-        <div class="chat-subtitle" id="statusText">online • отвечает локально</div>
+  <div class="chat-header">
+    <div class="chat-title">Алиса</div>
+    <div class="chat-subtitle" id="statusText">online • отвечает локально</div>
 
-        <div class="controls-row">
-          <div class="controls-label">Режим:</div>
-          <select id="modeSelect" class="glass-select">
-            <option value="standard">Стандарт</option>
-            <option value="assist">Ассистент</option>
-            <option value="care">Забота</option>
-          </select>
-        </div>
+    <div class="controls-row">
+      <div class="controls-label">Режим:</div>
+
+      <div class="mode-actions">
+        <select id="modeSelect" class="glass-select">
+          <option value="standard">Стандарт</option>
+          <option value="assist">Ассистент</option>
+          <option value="care">Забота</option>
+        </select>
+
+        <button id="guideBtn" class="guide-icon-btn" type="button" aria-label="Открыть гайд">?</button>
       </div>
-
-      <div id="messages" class="messages"></div>
-
-      <div class="input-area">
-        <input id="input" placeholder="Напиши сообщение..." />
-        <button type="button" onclick="sendMessage()">➤</button>
-        <button type="button" onclick="resetChat()">↻</button>
-      </div>
-
     </div>
+  </div>
+
+  <div id="messages" class="messages"></div>
+
+  <div class="input-area">
+    <input id="input" placeholder="Напиши сообщение..." />
+    <button type="button" onclick="sendMessage()">➤</button>
+    <button type="button" onclick="resetChat()">↻</button>
+  </div>
+
+</div>
 
     <!-- RIGHT: CHARACTER -->
     <div class="character-section">
@@ -118,6 +123,82 @@
   </div>
 
 </div>
+
+<!-- GUIDE MODAL -->
+<div id="guideModal" class="guide-modal hidden">
+  <div class="guide-backdrop"></div>
+
+  <div class="guide-dialog">
+    <button id="guideCloseBtn" class="guide-close" type="button" aria-label="Закрыть">✕</button>
+
+    <div class="guide-head">
+      <div class="guide-kicker">guide / help</div>
+      <div class="guide-title">Как работает Alice Lite</div>
+      <div class="guide-subtitle">
+        Короткий гайд по запуску, Ollama и модели.
+      </div>
+    </div>
+
+    <div class="guide-content">
+      <section class="guide-section">
+        <h3>Что это вообще</h3>
+        <p>
+          Alice Lite — это локальный AI companion. Интерфейс запускается как обычное приложение,
+          а ответы генерируются через Ollama на твоём ПК.
+        </p>
+      </section>
+
+      <section class="guide-section">
+        <h3>Что нужно для работы</h3>
+        <p>
+          1. Установить <b>Ollama</b><br>
+          2. Скачать нужную модель<br>
+          3. Запустить Ollama<br>
+          4. После этого открыть Alice Lite
+        </p>
+      </section>
+
+      <section class="guide-section">
+        <h3>Установка Ollama</h3>
+        <p>
+          Скачай Ollama с официального сайта, установи как обычную программу и убедись, что она запускается без ошибок.
+        </p>
+      </section>
+
+      <section class="guide-section">
+        <h3>Нужная модель</h3>
+        <p>
+          В текущей версии используется модель:<br>
+          <b>gemma3:4b</b>
+        </p>
+        <p>
+          Команда для установки:
+        </p>
+        <div class="guide-code">ollama pull gemma3:4b</div>
+      </section>
+
+      <section class="guide-section">
+        <h3>Как понять, что всё ок</h3>
+        <p>
+          Если Ollama запущена и модель скачана, Алиса будет нормально отвечать в чате.
+          Если нет — появятся ошибки соединения или пустые ответы.
+        </p>
+      </section>
+
+      <section class="guide-section">
+        <h3>Если Алиса не отвечает</h3>
+        <p>
+          Проверь:
+          <br>— запущена ли Ollama
+          <br>— скачана ли модель gemma3:4b
+          <br>— не занят ли порт/не упал ли локальный сервер
+          <br>— перезапусти приложение после запуска Ollama
+        </p>
+      </section>
+    </div>
+  </div>
+</div>
+
 
 <script src="app.js"></script>
 </body>
