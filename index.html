@@ -8,6 +8,62 @@
 </head>
 
 <body>
+  <!-- SPLASH SCREEN -->
+<div id="splash" class="splash">
+  <div class="splash-card">
+
+    <div class="splash-topline">
+      <div class="pulse-dot"></div>
+      <span>boot sequence</span>
+    </div>
+
+    <h1 class="splash-title">
+      <span>Alice</span>
+      <span>Lite</span>
+    </h1>
+
+    <div class="splash-subtitle">
+      Локальный AI companion запускается. Подготавливаю интерфейс и подключаю ядро диалога.
+    </div>
+
+    <div class="boot-lines">
+      <div class="boot-line">
+        <span>UI shell initialized</span>
+        <span class="line-ok">OK</span>
+      </div>
+
+      <div class="boot-line">
+        <span>Emotion engine loaded</span>
+        <span class="line-ok">OK</span>
+      </div>
+
+      <div class="boot-line">
+        <span>Session memory mounted</span>
+        <span class="line-ok">OK</span>
+      </div>
+
+      <div class="boot-line">
+        <span>Connecting to local core</span>
+        <span class="line-wait">WAIT</span>
+      </div>
+    </div>
+
+    <div class="progress-wrap">
+
+      <div class="progress-head">
+        <span>initializing</span>
+        <span id="progressPercent">0%</span>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
 <div class="app">
 
   <!-- CUSTOM TITLEBAR -->

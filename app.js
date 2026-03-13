@@ -212,3 +212,34 @@ document.getElementById("maxBtn")?.addEventListener("click", () => {
 document.getElementById("closeBtn")?.addEventListener("click", () => {
   window.windowControls?.close();
 });
+
+
+// ===== SPLASH CONTROL (5 секунд) =====
+
+window.addEventListener("load", () => {
+
+  const splash = document.getElementById("splash");
+  const percent = document.getElementById("progressPercent");
+
+  let p = 0;
+
+  const interval = setInterval(() => {
+
+    p += 2;
+
+    if (p >= 100){
+      p = 100;
+      clearInterval(interval);
+    }
+
+    if (percent) percent.textContent = p + "%";
+
+  }, 100); // прогресс обновляется каждые 100мс
+
+  setTimeout(() => {
+
+    if (splash) splash.classList.add("hidden");
+
+  }, 5000); // 5 секунд
+
+});
