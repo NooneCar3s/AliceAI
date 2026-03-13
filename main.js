@@ -1,15 +1,17 @@
-import { app, BrowserWindow, ipcMain, shell } from "electron";
+import { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage } from "electron";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
 import { execFile, spawn } from "child_process";
 import { startServer, stopServer } from "./server.js";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const currentFile = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(currentFile);
 
 let mainWindow = null;
 let serverPort = null;
+let tray = null;
+let isQuiting = false;
 
 const FAVORITE_SPOTIFY_URI = "spotify:playlist:04KF2GURIzqhwm5yTqpr7s";
 const FAVORITE_SPOTIFY_WEB = "https://open.spotify.com/playlist/04KF2GURIzqhwm5yTqpr7s?si=8df955f1a3e84be4";
@@ -79,6 +81,82 @@ function launchDetached(exePath) {
     } catch (e) {
       reject(e);
     }
+  });
+}
+
+function showMainWindow() {
+  if (!mainWindow) return;
+
+  if (mainWindow.isMinimized()) {
+    mainWindow.restore();
+  }
+
+  mainWindow.show();
+  mainWindow.focus();
+}
+
+function hideToTray() {
+  if (!mainWindow) return;
+  mainWindow.hide();
+}
+
+function getTrayIconPath() {
+  const icoPath = path.join(__dirname, "build", "icon.ico");
+  const pngPath = path.join(__dirname, "build", "icon.png");
+
+  if (fileExists(icoPath)) return icoPath;
+  if (fileExists(pngPath)) return pngPath;
+
+  return null;
+}
+
+function createTray() {
+  if (tray) return;
+
+  const trayIconPath = getTrayIconPath();
+
+  if (trayIconPath) {
+    tray = new Tray(trayIconPath);
+  } else {
+    const fallbackIcon = nativeImage.createEmpty();
+    tray = new Tray(fallbackIcon);
+  }
+
+  tray.setToolTip("Alice Lite");
+
+  const trayMenu = Menu.buildFromTemplate([
+    {
+      label: "Открыть Alice",
+      click: () => showMainWindow()
+    },
+    {
+      label: "Скрыть в трей",
+      click: () => hideToTray()
+    },
+    { type: "separator" },
+    {
+      label: "Выход",
+      click: () => {
+        isQuiting = true;
+        app.quit();
+      }
+    }
+  ]);
+
+  tray.setContextMenu(trayMenu);
+
+  tray.on("double-click", () => {
+    if (!mainWindow) return;
+
+    if (mainWindow.isVisible()) {
+      hideToTray();
+    } else {
+      showMainWindow();
+    }
+  });
+
+  tray.on("click", () => {
+    showMainWindow();
   });
 }
 
@@ -156,7 +234,16 @@ ipcMain.on("win:maximize", () => {
   mainWindow.isMaximized() ? mainWindow.unmaximize() : mainWindow.maximize();
 });
 
-ipcMain.on("win:close", () => mainWindow?.close());
+ipcMain.on("win:close", () => {
+  if (!mainWindow) return;
+
+  if (isQuiting) {
+    mainWindow.close();
+    return;
+  }
+
+  hideToTray();
+});
 
 ipcMain.handle("spotify:open-favorite", async () => {
   try {
@@ -224,6 +311,13 @@ async function createWindow() {
     }
   });
 
+  mainWindow.on("close", (event) => {
+    if (isQuiting) return;
+
+    event.preventDefault();
+    hideToTray();
+  });
+
   const indexPath = path.join(__dirname, "index.html");
   await mainWindow.loadFile(indexPath, { query: { apiPort: String(serverPort) } });
 
@@ -232,13 +326,33 @@ async function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
-
-app.on("window-all-closed", async () => {
-  await stopServer();
-  if (process.platform !== "darwin") app.quit();
+app.whenReady().then(async () => {
+  createTray();
+  await createWindow();
 });
 
-app.on("activate", () => {
-  if (BrowserWindow.getAllWindows().length === 0) createWindow();
+app.on("before-quit", () => {
+  isQuiting = true;
+});
+
+app.on("window-all-closed", async (event) => {
+  if (!isQuiting) {
+    event.preventDefault();
+    return;
+  }
+
+  await stopServer();
+
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});
+
+app.on("activate", async () => {
+  if (mainWindow) {
+    showMainWindow();
+    return;
+  }
+
+  await createWindow();
 });
