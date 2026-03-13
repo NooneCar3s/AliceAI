@@ -18,3 +18,7 @@ contextBridge.exposeInMainWorld("spotifyControls", {
   openFavoritePlaylist: () => ipcRenderer.invoke("spotify:open-favorite"),
   pause: () => ipcRenderer.invoke("spotify:pause")
 });
+
+contextBridge.exposeInMainWorld("desktopControls", {
+  openOpera: () => ipcRenderer.invoke("desktop:open-opera")
+});

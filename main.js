@@ -1,7 +1,8 @@
 import { app, BrowserWindow, ipcMain, shell } from "electron";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
-import { execFile } from "child_process";
+import { execFile, spawn } from "child_process";
 import { startServer, stopServer } from "./server.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -56,6 +57,62 @@ Start-Sleep -Milliseconds 120
   await runPowerShell(script);
 }
 
+function fileExists(filePath) {
+  try {
+    return fs.existsSync(filePath);
+  } catch {
+    return false;
+  }
+}
+
+function launchDetached(exePath) {
+  return new Promise((resolve, reject) => {
+    try {
+      const child = spawn(exePath, [], {
+        detached: true,
+        stdio: "ignore"
+      });
+
+      child.on("error", reject);
+      child.unref();
+      resolve(true);
+    } catch (e) {
+      reject(e);
+    }
+  });
+}
+
+async function openOpera() {
+  const username = process.env.USERNAME || "";
+
+  const candidates = [
+    `C:\\Users\\${username}\\AppData\\Local\\Programs\\Opera Air\\Opera.exe`,
+    `C:\\Users\\${username}\\AppData\\Local\\Programs\\Opera Air\\launcher.exe`,
+    `C:\\Users\\${username}\\AppData\\Local\\Programs\\Opera\\launcher.exe`,
+    `C:\\Program Files\\Opera\\launcher.exe`,
+    `C:\\Program Files (x86)\\Opera\\launcher.exe`
+  ];
+
+  for (const exePath of candidates) {
+    if (fileExists(exePath)) {
+      try {
+        await launchDetached(exePath);
+        return { ok: true, path: exePath };
+      } catch (e) {
+        return {
+          ok: false,
+          message: `Нашла Opera, но не смогла запустить: ${String(e?.message || e)}`
+        };
+      }
+    }
+  }
+
+  return {
+    ok: false,
+    message: "Не нашла установленную Opera на этом компьютере"
+  };
+}
+
 ipcMain.on("win:minimize", () => mainWindow?.minimize());
 
 ipcMain.on("win:maximize", () => {
@@ -67,19 +124,13 @@ ipcMain.on("win:close", () => mainWindow?.close());
 
 ipcMain.handle("spotify:open-favorite", async () => {
   try {
-    // Открываем плейлист в Spotify
     await shell.openExternal(FAVORITE_SPOTIFY_URI);
-
-    // Даём Spotify время подняться / переключиться на плейлист
     await sleep(2000);
-
-    // Шлём медиа-клавишу Play/Pause
     await sendMediaPlayPause();
 
     return { ok: true, played: true };
   } catch (e) {
     try {
-      // fallback: открыть web-ссылку, если URI не открылся
       await shell.openExternal(FAVORITE_SPOTIFY_WEB);
       return { ok: true, fallback: true, played: false };
     } catch (err) {
@@ -94,6 +145,17 @@ ipcMain.handle("spotify:pause", async () => {
     return { ok: true };
   } catch (e) {
     return { ok: false };
+  }
+});
+
+ipcMain.handle("desktop:open-opera", async () => {
+  try {
+    return await openOpera();
+  } catch (e) {
+    return {
+      ok: false,
+      message: `Ошибка запуска Opera: ${String(e?.message || e)}`
+    };
   }
 });
 

@@ -121,12 +121,27 @@ function detectLocalAction(text = "") {
       reply: "Включаю музыку 🎶"
     };
   }
+
   if (t === "алиса выключи музыку" || t === "алиса пауза") {
-  return {
-    type: "pause_music",
-    reply: "Поставила на паузу ⏸"
-  };
-}
+    return {
+      type: "pause_music",
+      reply: "Поставила на паузу ⏸"
+    };
+  }
+
+  if (
+    t === "алиса открой оперу" ||
+    t === "алиса открой opera" ||
+    t === "алиса открой opera air" ||
+    t === "алиса запусти оперу" ||
+    t === "алиса запусти opera" ||
+    t === "алиса запусти opera air"
+  ) {
+    return {
+      type: "open_opera",
+      reply: "Открываю Opera 🌐"
+    };
+  }
 
   return null;
 }

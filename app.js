@@ -136,17 +136,32 @@ async function handleDesktopAction(action) {
   if (!action?.type) return;
 
   try {
-if (action.type === "open_favorite_spotify") {
-  const result = await window.spotifyControls?.openFavoritePlaylist?.();
+    if (action.type === "open_favorite_spotify") {
+      const result = await window.spotifyControls?.openFavoritePlaylist?.();
 
-  if (!result?.ok) {
-    addMessage("Не смогла открыть Spotify 😢", "ai");
-  }
-}
+      if (!result?.ok) {
+        addMessage("Не смогла открыть Spotify 😢", "ai");
+      }
+      return;
+    }
 
-if (action.type === "pause_music") {
-  await window.spotifyControls?.pause?.();
-}
+    if (action.type === "pause_music") {
+      const result = await window.spotifyControls?.pause?.();
+
+      if (!result?.ok) {
+        addMessage("Не смогла поставить музыку на паузу 😢", "ai");
+      }
+      return;
+    }
+
+    if (action.type === "open_opera") {
+      const result = await window.desktopControls?.openOpera?.();
+
+      if (!result?.ok) {
+        addMessage(result?.message || "Не смогла открыть Opera 😢", "ai");
+      }
+      return;
+    }
   } catch (e) {
     console.error("Desktop action failed:", e);
     addMessage("Не смогла выполнить команду 😢", "ai");
